@@ -194,7 +194,7 @@ export default function Register() {
               )}
             </div>
 
-            <div>
+            <div className="hidden">
               <Label htmlFor="image">Profile Image</Label>
               <Input
                 id="image"
