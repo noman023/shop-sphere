@@ -110,15 +110,13 @@ export function Navbar() {
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage
-                    src={
-                      user?.image
-                        ? `${baseURL}/uploads/${user.image}`
-                        : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=100&q=80"
-                    }
-                    alt="Alex Morgan"
+                    src={user?.image && `${baseURL}/uploads/${user.image}`}
+                    alt={user?.name || "User"}
                     className="object-cover"
                   />
-                  <AvatarFallback>AM</AvatarFallback>
+                  <AvatarFallback>
+                    {user?.name?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="hidden md:block text-left">
                   <p className="text-sm font-medium">{user?.name}</p>

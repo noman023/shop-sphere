@@ -8,7 +8,6 @@ import {
   SettingsIcon,
   User,
   Heart,
-  MessageCircleQuestion,
   Truck,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -66,11 +65,6 @@ const customerNavItems: NavItem[] = [
     title: "Profile",
     href: "/profile",
     icon: <User className="w-5 h-5" />,
-  },
-  {
-    title: "Support",
-    href: "/support",
-    icon: <MessageCircleQuestion className="w-5 h-5" />,
   },
   {
     title: "Settings",

@@ -9,14 +9,7 @@ interface RegisterRequestBody {
   password: string;
 }
 
-interface MulterRequest extends Request {
-  file?: Express.Multer.File;
-}
-
-export async function register(
-  req: MulterRequest,
-  res: Response
-): Promise<void> {
+export async function register(req: Request, res: Response): Promise<void> {
   const { name, email, userRole, password } = req.body as RegisterRequestBody;
 
   try {
@@ -31,19 +24,12 @@ export async function register(
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Handle image
-    let imageUrl: string | null = null;
-    if (req.file) {
-      imageUrl = req.file.path || req.file.filename || null;
-    }
-
     // Create new user
     const newUser = new User({
       name,
       email,
       userRole,
       password: hashedPassword,
-      image: imageUrl, // Save image filename/path
     });
 
     // Save user to the database
@@ -56,4 +42,3 @@ export async function register(
     res.status(500).json({ error: error.message });
   }
 }
-

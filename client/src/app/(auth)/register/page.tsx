@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Select } from "@/components/ui/select";
 import {
@@ -23,13 +23,11 @@ type RegisterForm = {
   email: string;
   password: string;
   userRole: "seller" | "customer";
-  image?: FileList;
 };
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const router = useRouter();
 
   const {
@@ -37,27 +35,7 @@ export default function Register() {
     handleSubmit,
     formState: { errors },
     setValue,
-    watch,
   } = useForm<RegisterForm>();
-
-  // Watch for image changes to show preview
-  const imageFile = watch("image");
-
-  useEffect(() => {
-    if (imageFile && imageFile.length > 0) {
-      const file = imageFile[0];
-      setImagePreview(URL.createObjectURL(file));
-    } else {
-      setImagePreview(null);
-    }
-  }, [imageFile]);
-
-  // Handle file input manually
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setSelectedImage(file);
-    setImagePreview(file ? URL.createObjectURL(file) : null);
-  };
 
   const onSubmit = async (data: RegisterForm) => {
     try {
@@ -67,13 +45,8 @@ export default function Register() {
       formData.append("password", data.password);
       formData.append("userRole", data.userRole);
 
-      // Append the file from state
-      if (selectedImage) {
-        formData.append("image", selectedImage);
-      }
-
-      await axiosInstance.post("/auth/register", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+      await axiosInstance.post("/auth/register", data, {
+        headers: { "Content-Type": "application/json" },
       });
       toast.success("Registration successful! Please login.");
       router.push("/login");
@@ -191,26 +164,6 @@ export default function Register() {
                 <span className="text-xs text-red-500">
                   {errors.password.message}
                 </span>
-              )}
-            </div>
-
-            <div className="hidden">
-              <Label htmlFor="image">Profile Image</Label>
-              <Input
-                id="image"
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="mt-1"
-              />
-              {imagePreview && (
-                <div className="mt-2 flex items-center justify-center">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="mt-2 w-20 h-20 object-cover rounded-full border"
-                  />
-                </div>
               )}
             </div>
 
