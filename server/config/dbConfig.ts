@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
 
-// MongoDB Atlas connection URI
-const uri = `mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_PASS}@cluster0.faeme9d.mongodb.net/ecom_dashboard?retryWrites=true&w=majority&appName=Cluster0`;
+const uri =
+  process.env.NODE_ENV === "development"
+    ? process.env.LOCAL_DB_URI!
+    : process.env.DB_URI!;
 
 // Connect to MongoDB Atlas
 mongoose
@@ -9,6 +11,5 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   } as mongoose.ConnectOptions)
-  .then(() => console.log("✅ MongoDB Atlas connected"))
+  .then(() => console.log("✅ MongoDB connected"))
   .catch((err: Error) => console.error("❌ MongoDB connection error:", err));
-
