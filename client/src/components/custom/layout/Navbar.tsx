@@ -47,9 +47,20 @@ export function Navbar() {
         <PanelLeftIcon className="w-6 h-6" />
       </button>
 
-      <div>
-        <h1 className="text-2xl text-red-600 font-bold">Logo</h1>
+      <div className="flex items-center gap-2">
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 rounded-lg blur-sm opacity-50"></div>
+          <div className="relative bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-1.5">
+            <div className="bg-white rounded px-2 py-1">
+              <span className="text-red-600 font-bold text-lg">S</span>
+            </div>
+          </div>
+        </div>
+        <h1 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+          ShopSphere
+        </h1>
       </div>
+    
 
       <div className="flex items-center">
         <div className="relative flex items-center">

@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Cart from "../../models/CartModel";
 import mongoose from "mongoose";
-import "../../types"; // Import to ensure Express Request extension is loaded
+import "../../types"; 
 
 interface AddToCartRequestBody {
   productId: string;
