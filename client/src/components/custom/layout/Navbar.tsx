@@ -3,8 +3,6 @@ import { useContext, useState } from "react";
 import {
   Bell,
   ChevronDown,
-  Globe,
-  CircleHelp,
   PanelLeftIcon,
 } from "lucide-react";
 import {
@@ -22,13 +20,7 @@ import { baseURL } from "@/utils/baseURL";
 
 export function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-
-  const [isOpen, setIsOpen] = useState(false);
-  const [lang, setLang] = useState("EN");
-
-  const { logout, user } = useContext(AuthContext)!;
-
-  const languages = ["EN", "BN"];
+  const { logout, user } = useContext(AuthContext)!;  
 
   const toggleSidebar = () => {
     const sidebar = document.querySelector("#sidebar");
@@ -43,63 +35,20 @@ export function Navbar() {
 
   return (
     <header className="bg-white border-b border-gray-200 py-3 px-4 flex items-center justify-between ">
+       {/* sidbar toggle button for small screen */}
       <button className="lg:hidden p-2 " onClick={toggleSidebar}>
         <PanelLeftIcon className="w-6 h-6" />
       </button>
 
+      {/* app logo */}
       <div className="flex items-center gap-2">
-        <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 rounded-lg blur-sm opacity-50"></div>
-          <div className="relative bg-gradient-to-r from-red-500 to-red-600 rounded-lg p-1.5">
-            <div className="bg-white rounded px-2 py-1">
-              <span className="text-red-600 font-bold text-lg">S</span>
-            </div>
-          </div>
-        </div>
         <h1 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
           ShopSphere
         </h1>
       </div>
-    
 
+        {/* User profile menu  */}
       <div className="flex items-center">
-        <div className="relative flex items-center">
-          <Globe className="w-5 h-5" />
-          <button
-            onClick={() => setIsOpen((v) => !v)}
-            className="flex items-center px-2 py-1 text-sm"
-          >
-            {lang}
-            <ChevronDown className="w-4 h-4" />
-          </button>
-          {isOpen && (
-            <div className="absolute left-0 top-full mt-1 w-16 bg-white border rounded shadow z-10">
-              {languages.map((l) => (
-                <button
-                  key={l}
-                  onClick={() => {
-                    setLang(l);
-                    setIsOpen(false);
-                  }}
-                  className={`block w-full px-3 py-1 text-left text-sm hover:bg-gray-100 ${
-                    lang === l ? "font-semibold text-blue-600" : ""
-                  }`}
-                >
-                  {l}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          className="p-2 text-gray-dark hover:bg-gray-light mx-2 hidden md:block"
-        >
-          <CircleHelp className="h-5 w-5" />
-        </Button>
-
         <Button
           variant="ghost"
           size="icon"
