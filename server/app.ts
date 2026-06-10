@@ -23,7 +23,7 @@ app.use(
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 // Debug middleware
@@ -34,7 +34,7 @@ app.use((req: Request, _res: Response, next: NextFunction): void => {
 
 // Root route
 app.get("/", (_req: Request, res: Response): void => {
-  res.send("Welcome To ecom dashboard server!");
+  res.send("Welcome To Shope Sphere server!");
 });
 
 // All Routes
