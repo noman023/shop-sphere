@@ -77,7 +77,7 @@ export default function CustomerDashboard() {
       </div>
 
       {/* info cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 my-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
         <InfoCard
           label="Total Orders"
           count={24}
@@ -95,13 +95,7 @@ export default function CustomerDashboard() {
           count={3}
           icon={<Truck className="w-6 h-6 text-orange-400" />}
           iconBg="bg-orange-100"
-        />
-        <InfoCard
-          label="Active Coupons"
-          count={5}
-          icon={<Gift className="w-6 h-6 text-green-500" />}
-          iconBg="bg-green-100"
-        />
+        />        
       </div>
 
       {/* recent activities */}
