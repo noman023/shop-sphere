@@ -31,18 +31,18 @@ export default function EditProduct() {
       if (data.wholesalePrice)
         formData.append("wholesalePrice", data.wholesalePrice);
 
-      // Image (FileList)
+      const imageValue = data.image;
       const maxSize = 10 * 1024 * 1024; // 10MB
-      if (
-        data.image &&
-        Array.from(data.image).some((file) => file.size > maxSize)
-      ) {
-        toast.error("Image must be 10MB or less.");
-        return;
-      }
 
-      if (data.image && data.image.length > 0) {
-        formData.append("image", data.image[0]);
+      if (imageValue && typeof imageValue !== "string") {
+        if (Array.from(imageValue).some((file) => file.size > maxSize)) {
+          toast.error("Image must be 10MB or less.");
+          return;
+        }
+
+        if (imageValue.length > 0) {
+          formData.append("image", imageValue[0]);
+        }
       }
 
       await axiosInstance.put(`/products/edit/${id}`, formData, {
@@ -68,7 +68,7 @@ export default function EditProduct() {
   // Prepare default values for the form
   const product: ProductFormType = {
     ...data.product,
-    image: null, // FileList can't be prefilled, handle preview separately if needed
+    image: data.product?.image || null,
   };
 
   return (

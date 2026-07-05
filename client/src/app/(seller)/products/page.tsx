@@ -245,20 +245,24 @@ export default function Products() {
           <DialogHeader className="flex flex-col items-center">
             <AlertTriangle className="w-10 h-10 text-red-500 mb-2" />
             <DialogTitle className="text-center">Delete Product?</DialogTitle>
+
             <DialogDescription className="text-center">
               Are you sure you want to delete this product?
               <br />
               This action cannot be undone.
             </DialogDescription>
+            
             <div className="font-semibold text-base mt-2">
               {selectedProduct?.name}
             </div>
           </DialogHeader>
+
           <DialogFooter className="flex justify-center gap-2 mt-4">
-            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
+            <Button variant="outline" onClick={() => setDeleteModalOpen(false)} className="cursor-pointer">
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
+
+            <Button variant="destructive" onClick={handleDelete} className="cursor-pointer">
               <Trash2 className="w-4 h-4 mr-1" /> Delete
             </Button>
           </DialogFooter>

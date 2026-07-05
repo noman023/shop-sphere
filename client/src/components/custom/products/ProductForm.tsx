@@ -1,5 +1,5 @@
 "use client";
-import { Link, Trash, UploadCloud } from "lucide-react";
+import { Trash, UploadCloud } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,7 +12,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 
 const CATEGORIES = [
@@ -31,7 +31,7 @@ const CATEGORIES = [
 export type ProductFormType = {
   title: string;
   description: string;
-  image: FileList | null;
+  image: FileList | string | null;
   category: string;
   brand: string;
   color: string;
@@ -61,26 +61,52 @@ export function ProductForm({
   } = useForm<ProductFormType>({ defaultValues });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   useEffect(() => {
     if (defaultValues) reset(defaultValues);
   }, [defaultValues, reset]);
+
+  useEffect(() => {
+    const currentImage = watch("image");
+
+    if (typeof currentImage === "string" && currentImage) {
+      setImagePreview(currentImage);
+      return;
+    }
+
+    if (currentImage instanceof FileList && currentImage.length > 0) {
+      const objectUrl = URL.createObjectURL(currentImage[0]);
+      setImagePreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+
+    if (typeof defaultValues?.image === "string" && defaultValues.image) {
+      setImagePreview(defaultValues.image);
+      return;
+    }
+
+    setImagePreview(null);
+  }, [defaultValues?.image, watch, watch("image")]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       {/* General Information */}
       <div className="border rounded-xl p-6 bg-white">
         <h2 className="font-semibold text-lg mb-4">General Information</h2>
+
         <div className="mb-4">
           <Label htmlFor="title">
             Product Title <span className="text-red-500">*</span>
           </Label>
+          
           <Input
             id="title"
             placeholder="Enter Product Name"
             {...register("title", { required: "Product title is required" })}
             className="mt-1"
           />
+
           {errors.title && (
             <span className="text-xs text-red-500">{errors.title.message}</span>
           )}
@@ -101,6 +127,7 @@ export function ProductForm({
           <Label>
             Product Image <span className="text-red-500">*</span>
           </Label>
+
           <div
             className="mt-1 border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center bg-gray-50 cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
@@ -119,40 +146,62 @@ export function ProductForm({
             >
               Select File
             </Button>
+
             <input
               type="file"
               accept="image/png,image/jpeg,image/webp"
               className="hidden"
               {...register("image", {
-                required: "Product image is required",
+                required: isEdit ? false : "Product image is required",
               })}
               ref={fileInputRef}
               onChange={(e) => setValue("image", e.target.files)}
             />
-            {(() => {
-              const imageFiles = watch("image");
-              return (
-                imageFiles &&
-                imageFiles.length > 0 &&
-                imageFiles[0] && (
-                  <div className="mt-2 text-xs text-gray-600">
-                    {imageFiles[0].name}
-                  </div>
-                )
-              );
-            })()}
+
+            {imagePreview ? (
+              <div className="mt-4 flex flex-col items-center gap-2">
+                <img
+                  src={imagePreview}
+                  alt="Product preview"
+                  className="h-28 w-28 rounded-lg object-cover"
+                />
+                <p className="text-xs text-gray-600">
+                  {(() => {
+                    const currentImage = watch("image") as
+                      | FileList
+                      | string
+                      | null
+                      | undefined;
+
+                    if (currentImage instanceof FileList && currentImage.length > 0) {
+                      const selectedFile = currentImage[0];
+                      return selectedFile instanceof File
+                        ? selectedFile.name
+                        : "Current product image";
+                    }
+
+                    return "Current product image";
+                  })()}
+                </p>
+              </div>
+            ) : (
+              <div className="mt-2 text-xs text-gray-600">No image selected yet</div>
+            )}
           </div>
+
           {errors.image && (
             <span className="text-xs text-red-500">
               {errors.image.message as string}
             </span>
           )}
         </div>
+
         <div className="mb-2">
           <Label>
             Category <span className="text-red-500">*</span>
           </Label>
           <Select
+            value={watch("category") || ""}
             onValueChange={(value) =>
               setValue("category", value, { shouldValidate: true })
             }
@@ -204,6 +253,7 @@ export function ProductForm({
       {/* Pricing & Inventory */}
       <div className="border rounded-xl p-6 bg-white">
         <h2 className="font-semibold text-lg mb-4">Pricing & Inventory</h2>
+
         <div className="flex gap-4 mb-4">
           <div className="flex-1">
             <Label>
@@ -223,6 +273,7 @@ export function ProductForm({
               </span>
             )}
           </div>
+
           <div className="flex-1">
             <Label>Wholesale Price($)</Label>
             <Input
@@ -235,6 +286,7 @@ export function ProductForm({
             />
           </div>
         </div>
+
         <div className="flex gap-4 mb-4">
           <div className="flex-1">
             <Label>
