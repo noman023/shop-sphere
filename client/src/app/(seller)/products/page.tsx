@@ -10,7 +10,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { useState } from "react";
-import { AlertTriangle, Edit, Trash2, Plus } from "lucide-react";
+import { AlertTriangle, Edit, Eye, Trash2, Plus } from "lucide-react";
+
 import {
   Dialog,
   DialogContent,
@@ -23,10 +24,16 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 import Link from "next/link";
 import useTanstackQuery, { axiosInstance } from "@/hooks/useAxiosInstance";
-import { baseURL } from "@/utils/baseURL";
 import { toast } from "react-toastify";
 
 const columnHelper = createColumnHelper<any>();
+
+const formatCategory = (value?: string) =>
+  value
+    ? value
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (char) => char.toUpperCase())
+    : "N/A";
 
 export default function Products() {
   const [search, setSearch] = useState("");
@@ -42,6 +49,7 @@ export default function Products() {
   if (isLoading) {
     return <div className="p-8 text-center">Loading products...</div>;
   }
+
   if (isError) {
     return (
       <div className="p-8 text-center text-red-500">
@@ -56,7 +64,6 @@ export default function Products() {
       id: item._id,
       image: item.image || null,
       name: item.title,
-      sku: item.sku,
       price: `$${item.price}`,
       stock: item.quantity,
       status:
@@ -66,13 +73,13 @@ export default function Products() {
           ? "Low Stock"
           : "Active",
       category: item.category,
+      categoryLabel: formatCategory(item.category),
     })) || [];
 
   // Filtering logic
   const filteredData = allData.filter((item: any) => {
     const matchesSearch =
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      (item.sku || "").toLowerCase().includes(search.toLowerCase());
+      item.name.toLowerCase().includes(search.toLowerCase());
 
     const matchesStock =
       stockStatus === "" ||
@@ -109,16 +116,12 @@ export default function Products() {
       header: "Name",
       cell: (info) => info.getValue() || "N/A",
     }),
-    columnHelper.accessor("sku", {
-      header: "SKU",
-      cell: (info) => info.getValue() || "N/A",
-    }),
     columnHelper.accessor("price", {
       header: "Price",
       cell: (info) => info.getValue() || "N/A",
     }),
-    columnHelper.accessor("stock", {
-      header: "Stock",
+    columnHelper.accessor("categoryLabel", {
+      header: "Category",
       cell: (info) => info.getValue() || "N/A",
     }),
     columnHelper.accessor("status", {
@@ -140,6 +143,16 @@ export default function Products() {
       header: "Actions",
       cell: (info) => (
         <div className="flex gap-2">
+          <Link href={`/products/view/${info.row.original.id}`}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="px-2 py-1 h-8 cursor-pointer"
+            >
+              <Eye className="w-4 h-4 mr-1" /> View
+            </Button>
+          </Link>
+
           <Link href={`/products/edit/${info.row.original.id}`}>
             <Button
               size="sm"
@@ -153,7 +166,7 @@ export default function Products() {
           <Button
             size="sm"
             variant="outline"
-            className="px-2 py-1 h-8 border-red-200 text-red-500 hover:bg-red-50"
+            className="px-2 py-1 h-8 border-red-200 text-red-500 hover:bg-red-50 cursor-pointer"
             onClick={() => {
               setSelectedProduct(info.row.original);
               setDeleteModalOpen(true);
@@ -169,7 +182,7 @@ export default function Products() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Products</h1>
+        <h1 className="text-2xl font-bold">Your Products</h1>
 
         <Link href="/products/add">
           <Button className={`${commonButtonStyle} cursor-pointer`}>
@@ -182,7 +195,7 @@ export default function Products() {
       {/* Custom search and filter controls */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 my-6">
         <Input
-          placeholder="Search by name or SKU"
+          placeholder="Search by name"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className=" bg-white"
@@ -195,9 +208,16 @@ export default function Products() {
                 <SelectValue placeholder="Category" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="apparel">Apparel</SelectItem>
-                <SelectItem value="accessories">Accessories</SelectItem>
-                {/* ... */}
+                <SelectItem value="electronics">Electronics</SelectItem>
+                <SelectItem value="clothing">Clothing</SelectItem>
+                <SelectItem value="home-garden">Home Garden</SelectItem>
+                <SelectItem value="food-beverages">Food Beverages</SelectItem>
+                <SelectItem value="health-beauty">Health Beauty</SelectItem>
+                <SelectItem value="sports-outdoors">Sports Outdoors</SelectItem>
+                <SelectItem value="books-media">Books Media</SelectItem>
+                <SelectItem value="toys-games">Toys Games</SelectItem>
+                <SelectItem value="automotive">Automotive</SelectItem>
+                <SelectItem value="office-supplies">Office Supplies</SelectItem>
               </SelectContent>
             </Select>
           </div>
