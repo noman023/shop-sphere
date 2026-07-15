@@ -4,10 +4,7 @@ import {
   HomeIcon,
   PackageIcon,
   ShoppingCartIcon,
-  UsersIcon,
-  SettingsIcon,
   User,
-  Heart,
   Truck,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -33,14 +30,9 @@ const sellerNavItems: NavItem[] = [
     icon: <ShoppingCartIcon className="w-5 h-5" />,
   },
   {
-    title: "Customers",
-    href: "/customers",
-    icon: <UsersIcon className="w-5 h-5" />,
-  },
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: <SettingsIcon className="w-5 h-5" />,
+    title: "Profile",
+    href: "/profile",
+    icon: <User className="w-5 h-5" />,
   },
 ];
 
@@ -57,26 +49,14 @@ const customerNavItems: NavItem[] = [
     icon: <Truck className="w-5 h-5" />,
   },
   {
-    title: "Wishlist",
-    href: "/wishlist",
-    icon: <Heart className="w-5 h-5" />,
-  },
-  {
     title: "Profile",
     href: "/profile",
     icon: <User className="w-5 h-5" />,
-  },
-  {
-    title: "Settings",
-    href: "/settings",
-    icon: <SettingsIcon className="w-5 h-5" />,
   },
 ];
 
 export function SidebarComponent() {
   const { user } = useContext(AuthContext)!;
-  const { userRole } = user || {};
-
   const pathname = usePathname();
 
   return (
@@ -88,7 +68,7 @@ export function SidebarComponent() {
       >
         {/* Navigation Items based on user role */}
         <nav className="flex-1 space-y-1 p-4">
-          {userRole === "seller"
+          {user?.userRole === "seller"
             ? sellerNavItems.map((item) => {
                 const isActive = pathname === item.href;
                 return (
