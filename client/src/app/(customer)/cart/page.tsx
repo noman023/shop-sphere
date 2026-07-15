@@ -12,7 +12,7 @@ import Link from "next/link";
 export default function CartPage() {
   const [selected, setSelected] = useState<{ [id: string]: boolean }>({});
   const [promo, setPromo] = useState("");
-  const [quantities, setQuantities] = useState<{ [id: string]: number }>({}); // <-- move here
+  const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
 
   const { data, isLoading, isError, error } = useTanstackQuery("/cart");
 
@@ -52,7 +52,7 @@ export default function CartPage() {
   const subtotal = selectedItems.reduce(
     (sum: number, item: any) =>
       sum + (quantities[item.id] || item.quantity || 1) * item.price,
-    0
+    0,
   );
   const shipping = 0;
   const tax = 0;
@@ -64,7 +64,7 @@ export default function CartPage() {
     cartData.forEach((store: any) =>
       store.items.forEach((item: any) => {
         updates[item.id] = checked;
-      })
+      }),
     );
     setSelected(updates);
   };
@@ -147,7 +147,7 @@ export default function CartPage() {
                   <div className="w-14 h-14 bg-gray-200 rounded-md flex items-center justify-center ml-4 mr-4">
                     {item.image ? (
                       <img
-                        src={`${baseURL}/uploads/${item.image}`}
+                        src={item.image}
                         alt={item.name}
                         className="w-full h-full object-cover rounded"
                       />
@@ -240,7 +240,7 @@ export default function CartPage() {
                 onClick={() => {
                   localStorage.setItem(
                     "checkoutItems",
-                    JSON.stringify(selectedItems)
+                    JSON.stringify(selectedItems),
                   );
                 }}
               >
