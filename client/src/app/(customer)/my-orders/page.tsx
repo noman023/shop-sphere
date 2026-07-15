@@ -15,10 +15,20 @@ import {
   MoreVertical,
   PackageSearch,
   ShoppingBag,
+  Eye,
 } from "lucide-react";
 import { useState } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 import useTanstackQuery from "@/hooks/useAxiosInstance";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const columnHelper = createColumnHelper<any>();
 
@@ -41,6 +51,9 @@ export default function MyOrders() {
   const [search, setSearch] = useState("");
   const [orderStatus, setOrderStatus] = useState("");
 
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+
   const { data } = useTanstackQuery("/orders");
 
   // Map API data to table format
@@ -50,6 +63,7 @@ export default function MyOrders() {
       date: order.createdAt,
       status: order.status,
       amount: order.total,
+      orderObj: order,
     })) || [];
 
   // Filter by search, status tab, and dropdown
@@ -99,27 +113,55 @@ export default function MyOrders() {
         const status = info.row.original.status;
         return (
           <div className="flex gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="px-2 py-1 h-8 cursor-pointer"
+              onClick={() => {
+                setSelectedOrder(info.row.original);
+                setViewModalOpen(true);
+              }}
+            >
+              <Eye className="w-4 h-4 mr-1" /> View
+            </Button>
+
             {status === "Delivered" && (
-              <Button size="sm" variant="outline" className="px-3">
+              <Button
+                size="sm"
+                variant="outline"
+                className="px-3 cursor-pointer"
+              >
                 <Repeat className="w-4 h-4 mr-1" /> Buy Again
               </Button>
             )}
             {status === "Shipped" && (
-              <Button size="sm" variant="outline" className="px-3">
+              <Button
+                size="sm"
+                variant="outline"
+                className="px-3 cursor-pointer"
+              >
                 <PackageSearch className="w-4 h-4 mr-1" /> Track
               </Button>
             )}
             {status === "Pending" && (
-              <Button size="sm" variant="outline" className="px-3">
+              <Button
+                size="sm"
+                variant="outline"
+                className="px-3 cursor-pointer"
+              >
                 <X className="w-4 h-4 mr-1" /> Cancel
               </Button>
             )}
             {status === "Cancelled" && (
-              <Button size="sm" variant="outline" className="px-3">
+              <Button
+                size="sm"
+                variant="outline"
+                className="px-3 cursor-pointer"
+              >
                 <ShoppingBag className="w-4 h-4 mr-1" /> Reorder
               </Button>
             )}
-            <Button size="icon" variant="ghost">
+            <Button size="icon" variant="ghost" className="cursor-pointer">
               <MoreVertical className="w-4 h-4" />
             </Button>
           </div>
@@ -160,6 +202,108 @@ export default function MyOrders() {
       </div>
 
       <DataTable data={filteredData} columns={columns} />
+
+      {/* View Order Modal */}
+      <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Order #{selectedOrder?.id}</DialogTitle>
+            <DialogDescription>
+              Placed on {selectedOrder ? formatDate(selectedOrder.date) : ""}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mb-2 flex items-center gap-2">
+            <span className="text-gray-500">Status:</span>
+            <span
+              className={`px-2 py-1 rounded text-xs font-medium ${
+                statusStyles[selectedOrder?.status] ||
+                "bg-gray-100 text-gray-700"
+              }`}
+            >
+              {selectedOrder?.status}
+            </span>
+          </div>
+
+          <div className="mb-3">
+            <span className="text-gray-500 text-sm">Items:</span>
+            <div className="mt-2 space-y-3">
+              {selectedOrder?.orderObj?.items?.map((item: any, idx: number) => (
+                <div key={idx} className="flex gap-3 items-center">
+                  <div className="w-14 h-14 bg-gray-100 rounded-md overflow-hidden shrink-0">
+                    {item.product?.image ? (
+                      <img
+                        src={item.product.image}
+                        alt={item.product?.title || "Product"}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                        No image
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">
+                      {item.product?.title || "N/A"}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Qty: {item.quantity}
+                    </p>
+                  </div>
+                  <span className="text-sm font-medium">
+                    $
+                    {(
+                      (item.product?.price || 0) * item.quantity
+                    ).toFixed(2)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-2 flex">
+            <span className="w-28 text-gray-500">Delivery:</span>
+            <span className="capitalize">
+              {selectedOrder?.orderObj?.shippingMethod || "N/A"}
+            </span>
+          </div>
+          <div className="mb-2 flex">
+            <span className="w-28 text-gray-500">Payment:</span>
+            <span className="uppercase">
+              {selectedOrder?.orderObj?.paymentMethod || "N/A"}
+            </span>
+          </div>
+          <div className="mb-2 flex">
+            <span className="w-28 text-gray-500">Ship to:</span>
+            <span className="text-sm">
+              {[
+                selectedOrder?.orderObj?.shippingAddress?.name,
+                selectedOrder?.orderObj?.shippingAddress?.phone,
+                selectedOrder?.orderObj?.shippingAddress?.address,
+              ]
+                .filter(Boolean)
+                .join(", ") || "N/A"}
+            </span>
+          </div>
+          <div className="mb-4 flex">
+            <span className="w-28 text-gray-500">Total:</span>
+            <span className="font-medium">
+              ${parseFloat(selectedOrder?.amount || 0).toFixed(2)}
+            </span>
+          </div>
+
+          <DialogFooter className="flex justify-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setViewModalOpen(false)}
+              className="cursor-pointer"
+            >
+              <X className="w-4 h-4" /> Close
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

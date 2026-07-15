@@ -55,7 +55,7 @@ export default function Orders() {
         quantity: item.quantity,
         orderObj: order,
         itemObj: item,
-      }))
+      })),
     ) || [];
 
   // Filter by search and status tab
@@ -105,7 +105,7 @@ export default function Orders() {
           <Button
             size="sm"
             variant="outline"
-            className="px-2 py-1 h-8"
+            className="px-2 py-1 h-8 cursor-pointer"
             onClick={() => {
               setSelectedOrder(info.row.original);
               setViewModalOpen(true);
@@ -113,11 +113,12 @@ export default function Orders() {
           >
             <Eye className="w-4 h-4 mr-1" /> View
           </Button>
+
           {info.row.original.status === "Pending" && (
             <Button
               size="sm"
               variant="destructive"
-              className="px-2 py-1 h-8"
+              className="px-2 py-1 h-8 cursor-pointer"
               onClick={() =>
                 router.push(`/ship-order/${info.row.original.orderObj._id}`)
               }
@@ -172,6 +173,7 @@ export default function Orders() {
               Placed on {selectedOrder ? formatDate(selectedOrder.date) : ""}
             </DialogDescription>
           </DialogHeader>
+
           <div className="mb-2 flex items-center gap-2">
             <span className="text-gray-500">Status:</span>
             <span
@@ -180,41 +182,62 @@ export default function Orders() {
                 "bg-gray-100 text-gray-700"
               }`}
             >
-              {selectedOrder?.status === "Pending"
-                ? "Processing"
-                : selectedOrder?.status}
+              {selectedOrder?.status}
             </span>
           </div>
-          <div className="mb-2 flex">
-            <span className="w-24 text-gray-500">Product:</span>
-            <span className="font-medium">{selectedOrder?.product}</span>
-          </div>
-          <div className="mb-2 flex">
-            <span className="w-24 text-gray-500">Quantity:</span>
-            <span>{selectedOrder?.quantity}</span>
-          </div>
-          <div className="mb-2 flex">
-            <span className="w-24 text-gray-500">Amount:</span>
-            <span>{selectedOrder?.amount}</span>
-          </div>
-          <div className="mb-4 flex">
-            <span className="w-24 text-gray-500">Customer:</span>
-            <span>{selectedOrder?.buyer}</span>
+
+          <div className="mb-4 flex gap-3 items-start">
+            <div className="w-16 h-16 bg-gray-100 rounded-md overflow-hidden shrink-0">
+              {selectedOrder?.itemObj?.product?.image ? (
+                <img
+                  src={selectedOrder.itemObj.product.image}
+                  alt={selectedOrder?.product || "Product"}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                  No image
+                </div>
+              )}
+            </div>
+            <div className="flex-1">
+              <div className="mb-2 flex">
+                <span className="w-24 text-gray-500">Product:</span>
+                <span className="font-medium">{selectedOrder?.product}</span>
+              </div>
+              <div className="mb-2 flex">
+                <span className="w-24 text-gray-500">Quantity:</span>
+                <span>{selectedOrder?.quantity}</span>
+              </div>
+              <div className="mb-2 flex">
+                <span className="w-24 text-gray-500">Amount:</span>
+                <span>{selectedOrder?.amount}</span>
+              </div>
+              <div className="flex">
+                <span className="w-24 text-gray-500">Customer:</span>
+                <span>{selectedOrder?.buyer}</span>
+              </div>
+            </div>
           </div>
 
           <DialogFooter className="flex justify-center gap-2">
-            <Button variant="outline" onClick={() => setViewModalOpen(false)}>
-              <X className="w-4 h-4 mr-1" /> Cancel
+            <Button
+              variant="outline"
+              onClick={() => setViewModalOpen(false)}
+              className="cursor-pointer"
+            >
+              <X className="w-4 h-4" /> Close
             </Button>
 
             {selectedOrder?.status === "Pending" && (
               <Button
                 variant="destructive"
+                className="cursor-pointer"
                 onClick={() =>
                   router.push(`/ship-order/${selectedOrder.orderObj._id}`)
                 }
               >
-                <Truck className="w-4 h-4 mr-1" /> Ship
+                <Truck className="w-4 h-4" /> Ship
               </Button>
             )}
           </DialogFooter>

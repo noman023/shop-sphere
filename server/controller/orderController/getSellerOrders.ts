@@ -19,7 +19,7 @@ export async function getSellerOrders(
     const orders = await Order.find()
       .populate({
         path: "items.product",
-        select: "title seller", // add other fields as needed
+        select: "title seller image", // include image so frontend can display it
       })
       .populate("buyer", "name email") // if you want buyer info
       .sort({ createdAt: -1 });
