@@ -8,6 +8,12 @@ export type UserType = {
   email?: string;
   userRole?: string;
   image?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  storeName?: string;
+  bio?: string;
 };
 
 //  Define the context type
