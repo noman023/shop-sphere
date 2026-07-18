@@ -1,6 +1,7 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useContext, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import { AuthContext } from "@/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -16,19 +17,43 @@ import {
 } from "@/components/ui/card";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 
+type CustomerProfileFormValues = {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  country: string;
+  bio: string;
+  image: string;
+};
+
 export default function CustomerProfile() {
   const { user, setUser } = useContext(AuthContext)!;
 
-  const [name, setName] = useState(user?.name || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [phone, setPhone] = useState(user?.phone || "");
-  const [address, setAddress] = useState(user?.address || "");
-  const [city, setCity] = useState(user?.city || "");
-  const [country, setCountry] = useState(user?.country || "");
-  const [bio, setBio] = useState(user?.bio || "");
-  const [photoPreview, setPhotoPreview] = useState(user?.image || "");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [saved, setSaved] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+  } = useForm<CustomerProfileFormValues>({
+    defaultValues: {
+      name: user?.name || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      address: user?.address || "",
+      city: user?.city || "",
+      country: user?.country || "",
+      bio: user?.bio || "",
+      image: user?.image || "",
+    },
+  });
+
+  const name = watch("name");
+  const photoPreview = watch("image");
 
   useEffect(() => {
     if (saved) {
@@ -47,24 +72,23 @@ export default function CustomerProfile() {
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
-        setPhotoPreview(reader.result);
+        setValue("image", reader.result, { shouldDirty: true });
       }
     };
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit = (data: CustomerProfileFormValues) => {
     setUser({
       ...user,
-      name: name.trim() || user?.name,
-      email: email.trim() || user?.email,
-      phone: phone.trim(),
-      address: address.trim(),
-      city: city.trim(),
-      country: country.trim(),
-      bio: bio.trim(),
-      image: photoPreview,
+      name: data.name.trim() || user?.name,
+      email: data.email.trim() || user?.email,
+      phone: data.phone.trim(),
+      address: data.address.trim(),
+      city: data.city.trim(),
+      country: data.country.trim(),
+      bio: data.bio.trim(),
+      image: data.image,
     });
     setSaved(true);
   };
@@ -99,7 +123,7 @@ export default function CustomerProfile() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <Card className="border border-gray-200 p-6">
           <CardHeader className="flex flex-col gap-2 p-0">
             <CardTitle className="text-xl">Personal details</CardTitle>
@@ -112,9 +136,8 @@ export default function CustomerProfile() {
                 <Label htmlFor="customer-name">Full name</Label>
                 <Input
                   id="customer-name"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
                   placeholder="Jane Doe"
+                  {...register("name")}
                 />
               </div>
               <div className="space-y-2">
@@ -122,9 +145,8 @@ export default function CustomerProfile() {
                 <Input
                   id="customer-email"
                   type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
                   placeholder="jane@example.com"
+                  {...register("email")}
                 />
               </div>
             </div>
@@ -135,18 +157,16 @@ export default function CustomerProfile() {
                 <Input
                   id="customer-phone"
                   type="tel"
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
                   placeholder="(123) 456-7890"
+                  {...register("phone")}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="customer-country">Country</Label>
                 <Input
                   id="customer-country"
-                  value={country}
-                  onChange={(event) => setCountry(event.target.value)}
                   placeholder="United States"
+                  {...register("country")}
                 />
               </div>
             </div>
@@ -155,10 +175,9 @@ export default function CustomerProfile() {
               <Label htmlFor="customer-bio">About you</Label>
               <Textarea
                 id="customer-bio"
-                value={bio}
-                onChange={(event) => setBio(event.target.value)}
                 placeholder="I love shopping for essentials and supporting small brands."
                 className="min-h-30"
+                {...register("bio")}
               />
             </div>
 
@@ -167,18 +186,16 @@ export default function CustomerProfile() {
                 <Label htmlFor="customer-address">Street address</Label>
                 <Input
                   id="customer-address"
-                  value={address}
-                  onChange={(event) => setAddress(event.target.value)}
                   placeholder="123 Willow Lane"
+                  {...register("address")}
                 />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="customer-city">City</Label>
                 <Input
                   id="customer-city"
-                  value={city}
-                  onChange={(event) => setCity(event.target.value)}
                   placeholder="San Francisco"
+                  {...register("city")}
                 />
               </div>
             </div>

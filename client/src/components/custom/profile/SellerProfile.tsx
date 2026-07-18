@@ -1,6 +1,7 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useContext, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import { AuthContext } from "@/context/AuthContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -16,18 +17,41 @@ import {
 } from "@/components/ui/card";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 
+type SellerProfileFormValues = {
+  storeName: string;
+  name: string;
+  email: string;
+  phone: string;
+  country: string;
+  bio: string;
+  image: string;
+};
+
 export default function SellerProfile() {
   const { user, setUser } = useContext(AuthContext)!;
 
-  const [storeName, setStoreName] = useState(user?.storeName || "");
-  const [ownerName, setOwnerName] = useState(user?.name || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [phone, setPhone] = useState(user?.phone || "");
-  const [country, setCountry] = useState(user?.country || "");
-  const [bio, setBio] = useState(user?.bio || "");
-  const [photoPreview, setPhotoPreview] = useState(user?.image || "");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [saved, setSaved] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+  } = useForm<SellerProfileFormValues>({
+    defaultValues: {
+      storeName: user?.storeName || "",
+      name: user?.name || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      country: user?.country || "",
+      bio: user?.bio || "",
+      image: user?.image || "",
+    },
+  });
+
+  const storeName = watch("storeName");
+  const photoPreview = watch("image");
 
   useEffect(() => {
     if (saved) {
@@ -36,35 +60,32 @@ export default function SellerProfile() {
     }
   }, [saved]);
 
-  const headline = useMemo(
-    () => storeName || "Your store name",
-    [storeName]
-  );
+  const headline = useMemo(() => storeName || "Your store name", [storeName]);
 
   const handlePhotoChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
     setPhotoFile(file);
+
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
-        setPhotoPreview(reader.result);
+        setValue("image", reader.result, { shouldDirty: true });
       }
     };
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const onSubmit = (data: SellerProfileFormValues) => {
     setUser({
       ...user,
-      storeName: storeName.trim(),
-      name: ownerName.trim(),
-      email: email.trim(),
-      phone: phone.trim(),
-      country: country.trim(),
-      bio: bio.trim(),
-      image: photoPreview,
+      storeName: data.storeName.trim(),
+      name: data.name.trim(),
+      email: data.email.trim(),
+      phone: data.phone.trim(),
+      country: data.country.trim(),
+      bio: data.bio.trim(),
+      image: data.image,
     });
     setSaved(true);
   };
@@ -99,7 +120,7 @@ export default function SellerProfile() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+      <form onSubmit={handleSubmit(onSubmit)} className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <Card className="border border-gray-200 p-6">
           <CardHeader className="flex flex-col gap-2 p-0">
             <CardTitle className="text-xl">Store information</CardTitle>
@@ -112,9 +133,8 @@ export default function SellerProfile() {
                 <Label htmlFor="store-name">Store name</Label>
                 <Input
                   id="store-name"
-                  value={storeName}
-                  onChange={(event) => setStoreName(event.target.value)}
                   placeholder="Nimbus Studio"
+                  {...register("storeName")}
                 />
               </div>
 
@@ -122,9 +142,8 @@ export default function SellerProfile() {
                 <Label htmlFor="owner-name">Owner name</Label>
                 <Input
                   id="owner-name"
-                  value={ownerName}
-                  onChange={(event) => setOwnerName(event.target.value)}
                   placeholder="Alex Carter"
+                  {...register("name")}
                 />
               </div>
             </div>
@@ -135,9 +154,8 @@ export default function SellerProfile() {
                 <Input
                   id="seller-email"
                   type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
                   placeholder="store@example.com"
+                  {...register("email")}
                 />
               </div>
 
@@ -146,9 +164,8 @@ export default function SellerProfile() {
                 <Input
                   id="seller-phone"
                   type="tel"
-                  value={phone}
-                  onChange={(event) => setPhone(event.target.value)}
                   placeholder="(123) 456-7890"
+                  {...register("phone")}
                 />
               </div>
             </div>
@@ -157,10 +174,9 @@ export default function SellerProfile() {
               <Label htmlFor="seller-bio">Store description</Label>
               <Textarea
                 id="seller-bio"
-                value={bio}
-                onChange={(event) => setBio(event.target.value)}
                 placeholder="Share what makes your store special and what customers can expect."
                 className="min-h-35"
+                {...register("bio")}
               />
             </div>
 
@@ -168,9 +184,8 @@ export default function SellerProfile() {
               <Label htmlFor="seller-country">Country / region</Label>
               <Input
                 id="seller-country"
-                value={country}
-                onChange={(event) => setCountry(event.target.value)}
                 placeholder="United States"
+                {...register("country")}
               />
             </div>
           </CardContent>
@@ -219,4 +234,3 @@ export default function SellerProfile() {
     </div>
   );
 }
-
