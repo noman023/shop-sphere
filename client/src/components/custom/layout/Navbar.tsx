@@ -4,6 +4,7 @@ import {
   Bell,
   ChevronDown,
   PanelLeftIcon,
+  LogOut,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -14,13 +15,22 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { AuthContext } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import { baseURL } from "@/utils/baseURL";
 
 export function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const { logout, user } = useContext(AuthContext)!;  
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const { logout, user } = useContext(AuthContext)!;
 
   const toggleSidebar = () => {
     const sidebar = document.querySelector("#sidebar");
@@ -30,6 +40,8 @@ export function Navbar() {
   const handleLogout = () => {
     logout();
     localStorage.removeItem("token");
+    setShowLogoutDialog(false);
+    setShowProfileMenu(false);
     toast.success("Logout Successfully!");
   };
 
@@ -42,7 +54,7 @@ export function Navbar() {
 
       {/* app logo */}
       <div className="flex items-center gap-2">
-        <h1 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
+        <h1 className="text-2xl font-bold bg-linear-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
           ShopSphere
         </h1>
       </div>
@@ -86,12 +98,14 @@ export function Navbar() {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem className="cursor-pointer">
+              <DropdownMenuItem className="cursor-pointer" >
                 Profile
               </DropdownMenuItem>
+
               <DropdownMenuSeparator />
+
               <DropdownMenuItem
-                onClick={handleLogout}
+                onClick={() => setShowLogoutDialog(true)}
                 className="cursor-pointer"
               >
                 Logout
@@ -100,6 +114,39 @@ export function Navbar() {
           </DropdownMenu>
         </div>
       </div>
+
+       {/* logout confirmation modal */}
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm logout</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to sign out of your account?
+            </DialogDescription>
+          </DialogHeader>
+
+          <DialogFooter className="sm:justify-end">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowLogoutDialog(false)}
+              className="cursor-pointer"              
+            >
+              Cancel
+            </Button>
+
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={handleLogout}
+              className="cursor-pointer"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 }
