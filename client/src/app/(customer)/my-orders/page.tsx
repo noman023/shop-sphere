@@ -29,6 +29,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { commonButtonStyle } from "@/utils/commonButtonStyle";
 
 const columnHelper = createColumnHelper<any>();
 
@@ -294,10 +295,9 @@ export default function MyOrders() {
           </div>
 
           <DialogFooter className="flex justify-center gap-2">
-            <Button
-              variant="outline"
+            <Button              
               onClick={() => setViewModalOpen(false)}
-              className="cursor-pointer"
+              className={commonButtonStyle}              
             >
               <X className="w-4 h-4" /> Close
             </Button>

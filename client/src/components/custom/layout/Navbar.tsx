@@ -26,6 +26,8 @@ import {
 import { AuthContext } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import { baseURL } from "@/utils/baseURL";
+import Link from "next/link";
+import { commonButtonStyle } from "@/utils/commonButtonStyle";
 
 export function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -98,9 +100,11 @@ export function Navbar() {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem className="cursor-pointer" >
-                Profile
-              </DropdownMenuItem>
+              <Link href={'/profile'}>
+                <DropdownMenuItem className="cursor-pointer" >
+                  Profile
+                </DropdownMenuItem>
+              </Link>
 
               <DropdownMenuSeparator />
 
@@ -136,10 +140,9 @@ export function Navbar() {
             </Button>
 
             <Button
-              type="button"
-              variant="destructive"
+              type="button"              
               onClick={handleLogout}
-              className="cursor-pointer"
+              className={commonButtonStyle}
             >
               <LogOut className="mr-2 h-4 w-4" />
               Logout
