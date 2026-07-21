@@ -8,7 +8,7 @@ export default function Profile() {
   const { user } = useContext(AuthContext)!;
 
   return (
-    <div>
+    <div className="pb-10">
       {user?.userRole === "seller" ? <SellerProfile /> : <CustomerProfile />}
     </div>
   );

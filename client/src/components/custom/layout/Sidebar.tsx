@@ -63,8 +63,7 @@ export function SidebarComponent() {
     <div className="relative">
       <aside
         id="sidebar"
-        className="fixed lg:relative w-64 h-[calc(100vh-4rem)] bg-white border-r border-gray-200 
-                 -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"
+        className="fixed left-0 top-16 z-40 h-[calc(100vh-4rem)] w-64 border-r border-gray-200 bg-white shadow-sm transition-transform duration-300 ease-in-out -translate-x-full lg:relative lg:top-0 lg:translate-x-0 lg:shadow-none"
       >
         {/* Navigation Items based on user role */}
         <nav className="flex-1 space-y-1 p-4">
