@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import useTanstackQuery, { axiosInstance } from "@/hooks/useAxiosInstance";
 import { toast } from "react-toastify";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
-import { baseURL } from "@/utils/baseURL";
 import { Heart } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export default function ShopPage() {
@@ -23,16 +23,6 @@ export default function ShopPage() {
       </div>
     );
   }
-
-  // In your Shop page, inside the Add to Cart button handler:
-  const handleAddToCart = async (productId: string) => {
-    try {
-      await axiosInstance.post("/cart/add", { productId, quantity: 1 });
-      toast.success("Added to cart!");
-    } catch (err: any) {
-      toast.error(err?.response?.data?.error || "Could not add to cart");
-    }
-  };
 
   const handleAddToWishlist = async (productId: string) => {
     try {
@@ -53,14 +43,18 @@ export default function ShopPage() {
             <CardHeader>
               <CardTitle>{product.title}</CardTitle>
             </CardHeader>
+
             <CardContent>
               {product.image && (
-                <img
-                  src={`${product.image}`}
-                  alt={product.title}
-                  className="w-full h-40 object-cover rounded mb-2"
-                />
+                <Link href={`/shop/${product._id}`}>
+                  <img
+                    src={`${product.image}`}
+                    alt={product.title}
+                    className="w-full h-40 object-cover rounded mb-2"
+                  />
+                </Link>
               )}
+              
               <p className="text-gray-700 mb-2">{product.sku}</p>
               <div className="font-semibold text-lg mb-4">${product.price}</div>
               <div className="flex items-center justify-between gap-2">
@@ -78,12 +72,11 @@ export default function ShopPage() {
                   />
                 </button>
 
-                <Button
-                  onClick={() => handleAddToCart(product._id)}
-                  className={`${commonButtonStyle}`}
-                >
-                  Add to Cart
-                </Button>
+                <Link href={`/shop/${product._id}`} className="flex-1">
+                  <Button className={`${commonButtonStyle} w-full`}>
+                    View Details
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
