@@ -16,20 +16,15 @@ export default function ProtectedRoute({
   const isAuthPage = pathname === "/login" || pathname === "/register";
 
   useEffect(() => {
-    if (!auth?.user && !isAuthPage) {
+    if (!auth?.loading && !auth?.user && !isAuthPage) {
       router.replace("/login");
     }
-  }, [auth?.user, isAuthPage, router]);
+  }, [auth?.loading, auth?.user, isAuthPage, router]);
 
-  if (auth?.loading) {
-    return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
-  }
-
-  // show spinner while checking
-  if (!auth?.user && !isAuthPage) {
+  if (auth?.loading || (!auth?.user && !isAuthPage)) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <h1 className="text-2xl font-bold">Loading...</h1>
+      <div className="flex min-h-screen items-center justify-center text-lg">        
+          Loading...        
       </div>
     );
   }

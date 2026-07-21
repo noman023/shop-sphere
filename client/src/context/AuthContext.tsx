@@ -37,11 +37,19 @@ export default function AuthContextProvider({
   const [user, setUserState] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Load user from localStorage on mount
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) setUserState(JSON.parse(storedUser));
-    setLoading(false);
+    try {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser) as UserType;
+        setUserState(parsedUser);
+      }
+    } catch (error) {
+      console.error("Failed to parse stored user", error);
+      localStorage.removeItem("user");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   // set user on state and localStorage
