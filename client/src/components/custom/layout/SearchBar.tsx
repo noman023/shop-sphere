@@ -1,9 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AuthContext } from "@/context/AuthContext";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
-import { ChevronDown, Heart, ShoppingCart } from "lucide-react";
+import { Heart, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { useContext, useState } from "react";
 
@@ -17,8 +24,7 @@ const categories = [
 ];
 
 export default function SearchBar() {
-  const [selectedCategory, setSelectedCategory] = useState("Categories");
-  const [isOpen, setIsOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
 
   const authState = useContext(AuthContext);
   const { userRole } = authState?.user || {};
@@ -28,33 +34,18 @@ export default function SearchBar() {
       <div className="flex sm:flex-1/3 items-center gap-2">
         {/* Search Input with Categories */}
         <div className="flex flex-1 items-center border rounded-lg">
-          {/* Categories Dropdown moved inside */}
-          <div className="relative">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center gap-2 px-3 py-2 text-sm border-r"
-            >
-              <span>{selectedCategory}</span>
-              <ChevronDown className="w-4 h-4" />
-            </button>
-
-            {isOpen && (
-              <div className="absolute top-full left-0 mt-1 w-48 z-10 py-1 bg-white border rounded-lg shadow-lg">
-                {categories.map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => {
-                      setSelectedCategory(category);
-                      setIsOpen(false);
-                    }}
-                    className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100"
-                  >
-                    {category}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="h-10 rounded-none border-r border-input bg-transparent px-3 py-2 text-sm shadow-none focus:ring-0">
+              <SelectValue placeholder="Categories" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
           <input
             type="text"
