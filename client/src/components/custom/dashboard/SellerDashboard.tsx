@@ -1,5 +1,9 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Bar, BarChart } from "recharts";
+import { useContext } from "react";
+
+import { AuthContext } from "@/context/AuthContext";
+import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import {
   Card,
   CardContent,
@@ -7,13 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { CircleAlert } from "lucide-react";
-
-import { Bar, BarChart } from "recharts";
-
-import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { AuthContext } from "@/context/AuthContext";
-import { useContext } from "react";
+import useTanstackQuery from "@/hooks/useAxiosInstance";
 
 const chartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -83,12 +81,16 @@ function StatusCard({
 export default function SellerDashboard() {
   const { user } = useContext(AuthContext)!;
 
+  const {data} =useTanstackQuery("/dashboard/seller")
+  const orderStatus = data?.orderStatus;
+  
+
   return (
     <div>
       <div>
         <h1 className="text-3xl font-bold">Welcome back, {user?.name}!</h1>
         <p className="">
-          You've made <span className="font-bold">$2,450</span> today.
+          You've made <span className="font-bold">${data?.sales.today.amount}</span> today.
         </p>
       </div>
 
@@ -96,18 +98,18 @@ export default function SellerDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
         <CountCard
           text="Sales Today"
-          count={"$2,80"}
-          description="+15% from last period"
-        />
+          count={data?.sales.today.amount}
+          description={`+${data?.sales.today.changePct}% from last period`}
+          />
         <CountCard
           text="Sales This Week"
-          count={"$20,80"}
-          description="+15% from last period"
+          count={data?.sales.thisWeek.amount}
+          description={`+${data?.sales.thisWeek.changePct}% from last period`}          
         />
         <CountCard
-          text="Sales This Month"
-          count={"$222,80"}
-          description="+15% from last period"
+          text="Sales This Month"          
+          count={data?.sales.thisMonth.amount}
+          description={`+${data?.sales.thisMonth.changePct}% from last period`}          
         />
       </div>
 
@@ -116,10 +118,10 @@ export default function SellerDashboard() {
         <h1 className="text-xl font-bold">Orders Status</h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 my-4">
-          <StatusCard label="Pending" count={12} color="bg-orange-400" />
-          <StatusCard label="Shipped" count={24} color="bg-blue-500" />
-          <StatusCard label="Delivered" count={156} color="bg-green-500" />
-          <StatusCard label="Cancelled" count={3} color="bg-red-400" />
+          <StatusCard label="Pending" count={orderStatus.Pending} color="bg-orange-400" />
+          <StatusCard label="Shipped" count={orderStatus.Shipped} color="bg-blue-500" />
+          <StatusCard label="Delivered" count={orderStatus.Delivered} color="bg-green-500" />
+          <StatusCard label="Cancelled" count={orderStatus.Cancelled} color="bg-red-400" />
         </div>
       </div>
 
@@ -127,22 +129,12 @@ export default function SellerDashboard() {
       <div className="p-3 bg-white rounded-xl border mt-8">
         <h1 className="text-xl font-bold">Revenue Trend (30 days)</h1>
 
-        <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+        <ChartContainer config={chartConfig} className="min-h-50 w-full">
           <BarChart accessibilityLayer data={chartData}>
             <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
             <Bar dataKey="mobile" fill="var(--color-mobile)" radius={4} />
           </BarChart>
         </ChartContainer>
-      </div>
-
-      {/* notification */}
-      <div className="bg-orange-100 text-yellow-600 border flex items-center justify-between p-4 rounded-lg mt-8">
-        <div className="flex items-center gap-2">
-          <CircleAlert />
-          <p>You have 2 products running low. Restock now. </p>
-        </div>
-
-        <Button variant={"secondary"}>View Products</Button>
       </div>
     </div>
   );
