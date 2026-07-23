@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 import { axiosInstance } from "@/hooks/useAxiosInstance";
+import { toast } from "react-toastify";
 
 type CustomerProfileFormValues = {
   name: string;
@@ -31,9 +32,8 @@ type CustomerProfileFormValues = {
 
 export default function CustomerProfile() {
   const { user, setUser } = useContext(AuthContext)!;
-
   const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [saved, setSaved] = useState(false);
+
 
   const {
     register,
@@ -56,12 +56,7 @@ export default function CustomerProfile() {
   const name = watch("name");
   const photoPreview = watch("image");
 
-  useEffect(() => {
-    if (saved) {
-      const timeout = window.setTimeout(() => setSaved(false), 2500);
-      return () => window.clearTimeout(timeout);
-    }
-  }, [saved]);
+;
 
   const avatarLabel = useMemo(() => name || "Guest", [name]);
 
@@ -110,11 +105,12 @@ export default function CustomerProfile() {
 
       const updatedUser = response?.data?.user;
       if (updatedUser) {
-        setUser({ ...(user || {}), ...updatedUser });
-        setSaved(true);
+        setUser({ ...(user || {}), ...updatedUser });        
+        toast.success("Profile updated successfully!");
       }
     } catch (error) {
       console.error("Failed to update profile", error);
+      toast.error("Failed to update profile");
     }
   };
 
@@ -263,8 +259,7 @@ export default function CustomerProfile() {
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-end">
             <Button type="submit" className={commonButtonStyle}>
               Save changes
-            </Button>
-            {saved && <span className="text-sm text-green-600">Profile saved.</span>}
+            </Button>            
           </div>
         </Card>
       </form>

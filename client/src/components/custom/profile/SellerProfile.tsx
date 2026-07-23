@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 import { axiosInstance } from "@/hooks/useAxiosInstance";
+import { toast } from "react-toastify";
 
 type SellerProfileFormValues = {
   storeName: string;
@@ -30,9 +31,7 @@ type SellerProfileFormValues = {
 
 export default function SellerProfile() {
   const { user, setUser } = useContext(AuthContext)!;
-
   const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [saved, setSaved] = useState(false);
 
   const {
     register,
@@ -54,12 +53,6 @@ export default function SellerProfile() {
   const storeName = watch("storeName");
   const photoPreview = watch("image");
 
-  useEffect(() => {
-    if (saved) {
-      const timeout = window.setTimeout(() => setSaved(false), 2500);
-      return () => window.clearTimeout(timeout);
-    }
-  }, [saved]);
 
   const headline = useMemo(() => storeName || "Your store name", [storeName]);
 
@@ -108,7 +101,7 @@ export default function SellerProfile() {
       const updatedUser = response?.data?.user;
       if (updatedUser) {
         setUser({ ...(user || {}), ...updatedUser });
-        setSaved(true);
+        toast.success("Profile updated successfully!");
       }
     } catch (error) {
       console.error("Failed to update profile", error);
@@ -252,7 +245,6 @@ export default function SellerProfile() {
             <Button type="submit" className={commonButtonStyle}>
               Save store profile
             </Button>
-            {saved && <span className="text-sm text-green-600">Profile saved.</span>}
           </div>
         </Card>
       </form>

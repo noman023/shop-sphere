@@ -1,7 +1,6 @@
 "use client";
 import { useContext, useState } from "react";
 import {
-  Bell,
   ChevronDown,
   PanelLeftIcon,
   LogOut,
@@ -76,7 +75,7 @@ export function Navbar() {
               >
                 <Avatar className="h-8 w-8">
                   <AvatarImage
-                    src={user?.image && `${baseURL}/uploads/${user.image}`}
+                    src={user?.image}
                     alt={user?.name || "User"}
                     className="object-cover"
                   />
