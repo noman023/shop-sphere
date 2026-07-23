@@ -7,6 +7,12 @@ export interface IUser extends Document {
   userRole: UserRole;
   password: string;
   image: string | null;
+  phone?: string,
+  address?: string,
+  city?: string,
+  country?:string,
+  bio?:string,
+  storeName?:string,
 }
 
 const userSchema = new Schema<IUser>({
@@ -15,6 +21,15 @@ const userSchema = new Schema<IUser>({
   userRole: { type: String, enum: ["seller", "customer"], required: true },
   password: { type: String, required: true },
   image: { type: String, default: null },
+
+  phone: { type: String, default: "" },
+  address: { type: String, default: "" },
+  city: { type: String, default: "" },
+  country: { type: String, default: "" },
+  bio: { type: String, default: "" },
+
+  // seller-only
+  storeName: { type: String, default: "" },
 });
 
 const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);

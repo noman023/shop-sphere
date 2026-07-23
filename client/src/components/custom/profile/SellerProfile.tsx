@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
+import { axiosInstance } from "@/hooks/useAxiosInstance";
 
 type SellerProfileFormValues = {
   storeName: string;
@@ -76,18 +77,42 @@ export default function SellerProfile() {
     reader.readAsDataURL(file);
   };
 
-  const onSubmit = (data: SellerProfileFormValues) => {
-    setUser({
-      ...user,
-      storeName: data.storeName.trim(),
-      name: data.name.trim(),
-      email: data.email.trim(),
-      phone: data.phone.trim(),
-      country: data.country.trim(),
-      bio: data.bio.trim(),
-      image: data.image,
-    });
-    setSaved(true);
+  const onSubmit = async (data: SellerProfileFormValues) => {
+    try {
+      const payload = {
+        storeName: data.storeName.trim(),
+        name: data.name.trim(),
+        email: data.email.trim(),
+        phone: data.phone.trim(),
+        country: data.country.trim(),
+        bio: data.bio.trim(),
+      };
+
+      let response;
+      if (photoFile) {
+        const formData = new FormData();
+        formData.append("image", photoFile);
+        Object.entries(payload).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formData.append(key, value as string);
+          }
+        });
+
+        response = await axiosInstance.put("/profile", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        response = await axiosInstance.put("/profile", payload);
+      }
+
+      const updatedUser = response?.data?.user;
+      if (updatedUser) {
+        setUser({ ...(user || {}), ...updatedUser });
+        setSaved(true);
+      }
+    } catch (error) {
+      console.error("Failed to update profile", error);
+    }
   };
 
   return (

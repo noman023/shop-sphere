@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
+import { axiosInstance } from "@/hooks/useAxiosInstance";
 
 type CustomerProfileFormValues = {
   name: string;
@@ -78,19 +79,43 @@ export default function CustomerProfile() {
     reader.readAsDataURL(file);
   };
 
-  const onSubmit = (data: CustomerProfileFormValues) => {
-    setUser({
-      ...user,
-      name: data.name.trim() || user?.name,
-      email: data.email.trim() || user?.email,
-      phone: data.phone.trim(),
-      address: data.address.trim(),
-      city: data.city.trim(),
-      country: data.country.trim(),
-      bio: data.bio.trim(),
-      image: data.image,
-    });
-    setSaved(true);
+  const onSubmit = async (data: CustomerProfileFormValues) => {
+    try {
+      const payload = {
+        name: data.name.trim() || user?.name,
+        email: data.email.trim() || user?.email,
+        phone: data.phone.trim(),
+        address: data.address.trim(),
+        city: data.city.trim(),
+        country: data.country.trim(),
+        bio: data.bio.trim(),
+      };
+
+      let response;
+      if (photoFile) {
+        const formData = new FormData();
+        formData.append("image", photoFile);
+        Object.entries(payload).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formData.append(key, value as string);
+          }
+        });
+
+        response = await axiosInstance.put("/profile", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        response = await axiosInstance.put("/profile", payload);
+      }
+
+      const updatedUser = response?.data?.user;
+      if (updatedUser) {
+        setUser({ ...(user || {}), ...updatedUser });
+        setSaved(true);
+      }
+    } catch (error) {
+      console.error("Failed to update profile", error);
+    }
   };
 
   return (
