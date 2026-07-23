@@ -6,7 +6,7 @@ import { getSellerOrders } from "../controller/orderController/getSellerOrders";
 import { updateOrderStatus } from "../controller/orderController/updateOrderStatus";
 import { getOrderById } from "../controller/orderController/getOrderById";
 
-const router = Router();
+const router:Router = Router();
 
 router.post("/create", authenticateUser, createOrder);
 router.get("/", authenticateUser, getOrders);

@@ -8,7 +8,7 @@ import { getSingleProduct } from "../controller/productsController/getSingleProd
 import { authenticateUser } from "../middleware/authMiddlware";
 import upload from "../middleware/cloudinaryMiddleware";
 
-const router = Router();
+const router:Router = Router();
 
 router.get("/", getAllProducts);
 router.get("/seller", authenticateUser, getSellerProducts);

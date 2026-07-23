@@ -4,7 +4,7 @@ import { authenticateUser } from "../middleware/authMiddlware";
 import { deleteFromWishlist } from "../controller/wishlistController/deleteFromWishlist";
 import { getWishlist } from "../controller/wishlistController/getWishlist";
 
-const router = Router();
+const router:Router = Router();
 
 router.post("/add", authenticateUser, addToWishlist);
 router.get("/", authenticateUser, getWishlist);

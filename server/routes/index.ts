@@ -5,7 +5,7 @@ import cartRoutes from "./cartRoutes";
 import orderRoutes from "./orderRoutes";
 import wishlistRoutes from "./wishlistRoutes";
 
-const router = Router();
+const router:Router = Router();
 
 router.use("/auth", authRoutes);
 router.use("/products", productsRoutes);

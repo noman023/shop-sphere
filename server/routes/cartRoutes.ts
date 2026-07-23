@@ -4,7 +4,7 @@ import { authenticateUser } from "../middleware/authMiddlware";
 import { getCartItems } from "../controller/cartController/getCartItems";
 import { deleteCartItem } from "../controller/cartController/deleteCartItem";
 
-const router = Router();
+const router:Router = Router();
 
 router
   .get("/", authenticateUser, getCartItems)
