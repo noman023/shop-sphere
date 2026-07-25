@@ -1,7 +1,14 @@
 import { Card, CardHeader } from "@/components/ui/card";
 import { AuthContext } from "@/context/AuthContext";
-import { Package, Heart, Truck, Gift, CheckCircle, Star } from "lucide-react";
+import useTanstackQuery from "@/hooks/useAxiosInstance";
+import { Package, Heart, Truck, } from "lucide-react";
 import { useContext } from "react";
+
+type ActivitiType = {
+  title: string,
+  description:string,
+  time:string,
+}
 
 function InfoCard({
   label,
@@ -32,41 +39,12 @@ function InfoCard({
   );
 }
 
-const activities = [
-  {
-    icon: <CheckCircle className="w-5 h-5 text-green-500" />,
-    title: "Order Delivered",
-    description: "Your order #ORD-7895 has been delivered",
-    time: "Today, 9:45 AM",
-  },
-  {
-    icon: <Heart className="w-5 h-5 text-pink-400" />,
-    title: "Added to Wishlist",
-    description: "You added 'Wireless Headphones' to your wishlist",
-    time: "Yesterday, 4:30 PM",
-  },
-  {
-    icon: <Truck className="w-5 h-5 text-blue-500" />,
-    title: "Order Shipped",
-    description: "Your order #ORD-7891 has been shipped",
-    time: "Yesterday, 11:20 AM",
-  },
-  {
-    icon: <Star className="w-5 h-5 text-yellow-400" />,
-    title: "Review Posted",
-    description: "You posted a review for 'Smart Watch'",
-    time: "May 20, 2023",
-  },
-  {
-    icon: <Gift className="w-5 h-5 text-purple-500" />,
-    title: "Coupon Applied",
-    description: "You used coupon 'SUMMER20' on your purchase",
-    time: "May 18, 2023",
-  },
-];
 
 export default function CustomerDashboard() {
   const { user } = useContext(AuthContext)!;
+  const {data, isLoading} =useTanstackQuery("/dashboard/customer");
+
+  if(isLoading) return "Loading user data..";
 
   return (
     <div>
@@ -80,19 +58,19 @@ export default function CustomerDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
         <InfoCard
           label="Total Orders"
-          count={24}
+          count={data?.totalOrders}
           icon={<Package className="w-6 h-6 text-blue-500" />}
           iconBg="bg-blue-100"
         />
         <InfoCard
           label="Wishlist Items"
-          count={12}
+          count={data?.wishlistCount}
           icon={<Heart className="w-6 h-6 text-pink-400" />}
           iconBg="bg-pink-100"
         />
         <InfoCard
           label="Pending Deliveries"
-          count={3}
+          count={data?.pendingDeliveries}
           icon={<Truck className="w-6 h-6 text-orange-400" />}
           iconBg="bg-orange-100"
         />        
@@ -102,10 +80,9 @@ export default function CustomerDashboard() {
       <div className="bg-white rounded-xl border py-6 px-3 shadow-sm mt-10">
         <h1 className="font-semibold text-lg mb-4">Recent Activity</h1>
         <ul>
-          {activities.map((activity, idx) => (
+          {data?.activities.map((activity:ActivitiType, idx:number) => (
             <li key={idx} className="flex items-start justify-between py-4">
-              <div className="flex items-start gap-3">
-                <span>{activity.icon}</span>
+              <div className="flex items-start gap-3">                
 
                 <div>
                   <p className={`font-medium `}>{activity.title}</p>

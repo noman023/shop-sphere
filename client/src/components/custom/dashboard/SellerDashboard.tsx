@@ -81,9 +81,10 @@ function StatusCard({
 export default function SellerDashboard() {
   const { user } = useContext(AuthContext)!;
 
-  const {data} =useTanstackQuery("/dashboard/seller")
-  const orderStatus = data?.orderStatus;
+  const {data, isLoading} =useTanstackQuery("/dashboard/seller")
+  const orderStatus = data?.orderStatus || {};
   
+  if(isLoading) return "Loading user data";
 
   return (
     <div>
