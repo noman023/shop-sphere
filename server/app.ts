@@ -16,9 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: [
-      "http://localhost:3000",
-      "https://ecom-client-xi-seven.vercel.app",
-      "https://ecom-client-noman023-mojammel-nomans-projects.vercel.app",
+      // "http://localhost:3000",
+      "https://shop-sphere-client-psi.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     credentials: true,
