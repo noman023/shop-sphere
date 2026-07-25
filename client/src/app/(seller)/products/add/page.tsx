@@ -28,12 +28,11 @@ export default function AddProduct() {
 
       // Image (FileList)
       const maxSize = 10 * 1024 * 1024;
-      if (
-        data.image &&
-        Array.from(data.image).some((file) => file.size > maxSize)
-      ) {
-        toast.error("Image must be 10MB or less.");
-        return;
+      if (data.image && data.image instanceof FileList) {
+        if (Array.from(data.image).some((file) => file.size > maxSize)) {
+          toast.error("Image must be 10MB or less.");
+          return;
+        }
       }
 
       if (data.image && data.image.length > 0) {
