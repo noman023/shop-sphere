@@ -36,9 +36,10 @@ export default function ShopPage() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-6">Shop Products</h1>
+      <h1 className="text-3xl font-bold mb-6">All Products</h1>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.products.map((product: any) => (
+        {data.products?.map((product: any) => (
           <Card key={product._id} className="flex flex-col shadow-lg">
             <CardHeader>
               <CardTitle>{product.title}</CardTitle>
@@ -80,7 +81,9 @@ export default function ShopPage() {
               </div>
             </CardContent>
           </Card>
-        ))}
+        )) }
+
+        {data.products.length || <p className="text-red-500">Product Not Available!!</p>}
       </div>
     </div>
   );
