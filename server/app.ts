@@ -1,14 +1,13 @@
-import dotenv from "dotenv";
+import "dotenv/config";
 import express, { Express, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import "./types";
 
-dotenv.config();
+// Database connection
+import "./config/dbConfig";
 
 const app: Express = express();
 
-// Database connection
-import "./config/dbConfig";
 
 // Middleware
 app.use(express.json());
