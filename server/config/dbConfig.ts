@@ -5,11 +5,8 @@ const uri =
     ? process.env.LOCAL_DB_URI!
     : process.env.DB_URI!;
 
-// Connect to MongoDB Atlas
+// Connect to MongoDB
 mongoose
-  .connect(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  } as mongoose.ConnectOptions)
+  .connect(uri)
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err: Error) => console.error("❌ MongoDB connection error:", err));
