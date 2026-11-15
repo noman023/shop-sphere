@@ -1,0 +1,13 @@
+"use client";
+
+import CustomerDashboard from "@/components/custom/dashboard/CustomerDashboard";
+import SellerDashboard from "@/components/custom/dashboard/SellerDashboard";
+import { AuthContext } from "@/context/AuthContext";
+import { useContext } from "react";
+
+export default function DashboardPage() {
+  const authState = useContext(AuthContext);
+  const { userRole } = authState?.user || {};
+
+  return userRole === "seller" ? <SellerDashboard /> : <CustomerDashboard />;
+}

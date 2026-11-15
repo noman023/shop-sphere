@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 import { axiosInstance } from "@/hooks/useAxiosInstance";
 import { toast } from "react-toastify";
+import { AuthContext } from "@/context/AuthContext";
+import { useContext } from "react";
 
 const formatCategory = (value?: string) =>
   value
@@ -30,6 +32,7 @@ export default function ProductDetailsView({
   backLabel = "Back",
 }: ProductDetailsViewProps) {
   const router = useRouter();
+  const { user } = useContext(AuthContext)!;
 
   if (isLoading) return <div className="p-8 text-center">Loading product...</div>;
 
@@ -125,13 +128,23 @@ export default function ProductDetailsView({
               </div>
             </div>
 
-            {showActions && (
+            {showActions && user?.userRole === "customer" && (
               <div className="flex flex-wrap gap-3 border-t pt-4">
                 <Button onClick={handleAddToCart} className={`${commonButtonStyle}`}>
                   <ShoppingCart className="mr-2 h-4 w-4" />
                   Add to Cart
                 </Button>
                 <Button variant="outline" onClick={() => router.push("/wishlist")}>View Wishlist</Button>
+              </div>
+            )}
+            {showActions && !user && (
+              <div className="border-t pt-4">
+                <Button
+                  onClick={() => router.push("/login")}
+                  className={commonButtonStyle}
+                >
+                  Sign in to add to cart
+                </Button>
               </div>
             )}
           </div>

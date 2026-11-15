@@ -6,10 +6,12 @@ import { toast } from "react-toastify";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
 import { Heart } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "@/context/AuthContext";
 
 export default function ShopPage() {
   const [wishlistIds, setWishlistIds] = useState<string[]>([]);
+  const { user } = useContext(AuthContext)!;
   const { data, isLoading, isError, error } = useTanstackQuery("/products");
 
   // Handle loading and error states
@@ -23,6 +25,8 @@ export default function ShopPage() {
       </div>
     );
   }
+
+  const products = data?.products ?? [];
 
   const handleAddToWishlist = async (productId: string) => {
     try {
@@ -39,7 +43,7 @@ export default function ShopPage() {
       <h1 className="text-3xl font-bold mb-6">All Products</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.products?.map((product: any) => (
+        {products.map((product: any) => (
           <Card key={product._id} className="flex flex-col shadow-lg">
             <CardHeader>
               <CardTitle>{product.title}</CardTitle>
@@ -59,19 +63,21 @@ export default function ShopPage() {
               <p className="text-gray-700 mb-2">{product.sku}</p>
               <div className="font-semibold text-lg mb-4">${product.price}</div>
               <div className="flex items-center justify-between gap-2">
-                <button
-                  title="Add to Wishlist"
-                  onClick={() => handleAddToWishlist(product._id)}
-                  disabled={wishlistIds.includes(product._id)}
-                >
-                  <Heart
-                    className={`w-8 h-8 mr-2 ${
-                      wishlistIds.includes(product._id)
-                        ? "text-gray-400 cursor-not-allowed"
-                        : "text-red-500 cursor-pointer"
-                    }`}
-                  />
-                </button>
+                {user?.userRole === "customer" && (
+                  <button
+                    title="Add to Wishlist"
+                    onClick={() => handleAddToWishlist(product._id)}
+                    disabled={wishlistIds.includes(product._id)}
+                  >
+                    <Heart
+                      className={`w-8 h-8 mr-2 ${
+                        wishlistIds.includes(product._id)
+                          ? "text-gray-400 cursor-not-allowed"
+                          : "text-red-500 cursor-pointer"
+                      }`}
+                    />
+                  </button>
+                )}
 
                 <Link href={`/shop/${product._id}`} className="flex-1">
                   <Button className={`${commonButtonStyle} w-full`}>
@@ -83,7 +89,9 @@ export default function ShopPage() {
           </Card>
         )) }
 
-        {data.products.length || <p className="text-red-500">Product Not Available!!</p>}
+        {products.length === 0 && (
+          <p className="text-gray-600">Products are not available right now.</p>
+        )}
       </div>
     </div>
   );

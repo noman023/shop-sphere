@@ -34,7 +34,7 @@ export default function Login() {
       localStorage.setItem("token", res.data.token);
       authState?.setUser(res.data.user);
       toast.success("Login successful!");
-      router.push("/");
+      router.push("/dashboard");
     } catch (err: any) {
       toast.error(
         err?.response?.data?.error || "Login failed. Please try again."

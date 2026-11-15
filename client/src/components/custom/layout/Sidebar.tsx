@@ -18,7 +18,7 @@ interface NavItem {
 }
 
 const sellerNavItems: NavItem[] = [
-  { title: "Overview", href: "/", icon: <HomeIcon className="w-5 h-5" /> },
+  { title: "Overview", href: "/dashboard", icon: <HomeIcon className="w-5 h-5" /> },
   {
     title: "Products",
     href: "/products",
@@ -37,7 +37,7 @@ const sellerNavItems: NavItem[] = [
 ];
 
 const customerNavItems: NavItem[] = [
-  { title: "Overview", href: "/", icon: <HomeIcon className="w-5 h-5" /> },
+  { title: "Overview", href: "/dashboard", icon: <HomeIcon className="w-5 h-5" /> },
   {
     title: "Shop",
     href: "/shop",
