@@ -14,7 +14,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAuthPage = pathname === "/login" || pathname === "/register";
   const isPublicStorePage =
-    pathname === "/" || pathname === "/shop" || pathname.startsWith("/shop/");
+    pathname === "/" ||
+    pathname === "/browse" ||
+    pathname.startsWith("/browse/");
 
   return (
     <QueryClientProvider client={queryClient}>

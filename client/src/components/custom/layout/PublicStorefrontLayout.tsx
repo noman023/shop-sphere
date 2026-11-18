@@ -31,7 +31,7 @@ export default function PublicStorefrontLayout({
 
           <nav className="flex items-center gap-5 sm:gap-8">
             <Link
-              href="/shop"
+              href="/browse"
               className="text-sm font-medium text-gray-700 hover:text-red-600"
             >
               Shop

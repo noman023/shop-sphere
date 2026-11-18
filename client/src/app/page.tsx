@@ -39,7 +39,7 @@ export default function Home() {
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild className="h-12 bg-red-600 px-6 text-base hover:bg-red-700">
-              <Link href="/shop">
+              <Link href="/browse">
                 Explore the shop <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
@@ -103,7 +103,7 @@ export default function Home() {
               </h2>
             </div>
             <Link
-              href="/shop"
+              href="/browse"
               className="inline-flex items-center gap-2 font-semibold text-red-600 hover:text-red-700"
             >
               Shop all products <ArrowRight className="h-4 w-4" />
@@ -121,7 +121,7 @@ export default function Home() {
               {products.slice(0, 4).map((product) => (
                 <Link
                   key={product._id}
-                  href={`/shop/${product._id}`}
+                  href={`/browse/${product._id}`}
                   className="group overflow-hidden rounded-2xl border border-gray-200 bg-white transition hover:-translate-y-1 hover:shadow-lg"
                 >
                   {product.image ? (
@@ -171,7 +171,7 @@ export default function Home() {
         </div>
 
         <Button asChild className="bg-red-600 px-6 hover:bg-red-700">
-          <Link href="/shop">Browse products</Link>
+          <Link href="/browse">Browse products</Link>
         </Button>
       </section>
     </div>
