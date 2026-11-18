@@ -5,6 +5,17 @@ import { ArrowRight, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { useContext } from "react";
 
+export function AppLogo (){
+  return (
+  <Link href="/" className="flex items-center gap-2">
+    <ShoppingBag className="h-6 w-6 text-red-600" />
+    
+    <span className="text-xl font-bold tracking-tight text-gray-950">
+      Shop<span className="text-red-600">Sphere</span>
+    </span>
+  </Link>
+)}
+
 export default function PublicStorefrontLayout({
   children,
 }: {
@@ -16,12 +27,7 @@ export default function PublicStorefrontLayout({
     <div className="min-h-screen bg-white">
       <header className="border-b border-gray-100 bg-white">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-8">
-          <Link href="/" className="flex items-center gap-2">
-            <ShoppingBag className="h-6 w-6 text-red-600" />
-            <span className="text-xl font-bold tracking-tight text-gray-950">
-              Shop<span className="text-red-600">Sphere</span>
-            </span>
-          </Link>
+          <AppLogo/>
 
           <nav className="flex items-center gap-5 sm:gap-8">
             <Link

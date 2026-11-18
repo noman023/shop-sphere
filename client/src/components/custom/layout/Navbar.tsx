@@ -4,6 +4,7 @@ import {
   ChevronDown,
   PanelLeftIcon,
   LogOut,
+  ShoppingBag,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -27,6 +28,7 @@ import { toast } from "react-toastify";
 import { baseURL } from "@/utils/baseURL";
 import Link from "next/link";
 import { commonButtonStyle } from "@/utils/commonButtonStyle";
+import { AppLogo } from "./PublicStorefrontLayout";
 
 export function Navbar() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -55,11 +57,7 @@ export function Navbar() {
 
       {/* app logo */}
       <div className="flex items-center gap-2">
-        <Link href={"/"}>
-          <h1 className="text-2xl font-bold bg-linear-to-r from-red-500 to-red-600 bg-clip-text text-transparent">
-            ShopSphere
-          </h1>
-        </Link>
+        <AppLogo/>
       </div>
 
         {/* User profile menu  */}    
