@@ -29,6 +29,8 @@ export default function SearchBar() {
   const authState = useContext(AuthContext);
   const { userRole } = authState?.user || {};
 
+  if (userRole === "seller") return null;
+
   return (
     <div className="flex gap-2 flex-col lg:flex-row w-full my-5 lg:px-4">
       <div className="flex sm:flex-1/3 items-center gap-2">
@@ -57,25 +59,22 @@ export default function SearchBar() {
         <Button className={commonButtonStyle}>Search</Button>
       </div>
 
-      <div className="flex items-center justify-center gap-2">        
-          {/* buttons for customer only */}
-          {userRole === "customer" && (
-            <div className="flex items-center gap-4 text-gray-600">
-              <Link href={`/wishlist`}>
-                <div className="flex items-center gap-1 text-gray-600 cursor-pointer hover:text-red-500">
-                  <Heart className="w-6 h-6 " />
-                  <p>Wishlist</p>
-                </div>
-              </Link>
-
-              <Link href={"/cart"}>
-                <div className="flex items-center gap-1 cursor-pointer hover:text-red-500">
-                  <ShoppingCart className="w-6 h-6 " />
-                  <p>Cart</p>
-                </div>
-              </Link>
+      <div className="flex items-center justify-center gap-2">       
+        <div className="flex items-center gap-4 text-gray-600">
+          <Link href={`/wishlist`}>
+            <div className="flex items-center gap-1 text-gray-600 cursor-pointer hover:text-red-500">
+              <Heart className="w-6 h-6 " />
+              <p>Wishlist</p>
             </div>
-          )}
+          </Link>
+
+          <Link href={"/cart"}>
+            <div className="flex items-center gap-1 cursor-pointer hover:text-red-500">
+              <ShoppingCart className="w-6 h-6 " />
+              <p>Cart</p>
+            </div>
+          </Link>
+        </div>
       </div>
     </div>
   );
