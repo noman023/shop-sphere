@@ -50,7 +50,7 @@ export default function SearchBar() {
           <input
             type="text"
             placeholder="Search by product, brand, or keyword"
-            className="w-full px-4 py-2 text-sm focus:outline-none"
+            className="w-full px-4 py-2 text-sm"            
           />
         </div>
 
