@@ -55,6 +55,9 @@ A simple e-commerce web application that allows users to browse products, manage
 # Application Flow
 
 ```text
+Public Page (Default entry point for all visitors)
+  │
+  ▼
 Login page (if not logged in)
   │
   ▼
