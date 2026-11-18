@@ -20,9 +20,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider>
         {isAuthPage ? (
-          <main className="flex-1 overflow-auto p-4 bg-gray-50 min-h-screen flex items-center justify-center">
-            {children}
-          </main>
+          <PublicStorefrontLayout>
+            <main className="flex min-h-[calc(100vh-7.5rem)] items-center justify-center bg-gray-50 p-4">
+              {children}
+            </main>
+          </PublicStorefrontLayout>
         ) : isPublicStorePage ? (
           <PublicStorefrontLayout>{children}</PublicStorefrontLayout>
         ) : (
